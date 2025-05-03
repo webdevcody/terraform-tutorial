@@ -1,0 +1,29 @@
+---
+description: 
+globs: public/**/*
+alwaysApply: false
+---
+3D Node Navigation Application: Rules & Behavior
+1. Nodes and Connections
+Nodes: Represented as glowing spheres in 3D space.
+The current node is colored green.
+The future node (the one you would move to next) is colored yellow.
+All other nodes are white.
+Connections: Lines between nodes, representing possible navigation paths.
+2. Navigation Controls
+W: Move forward to the currently highlighted (yellow) future node. The new node becomes green, and a new future node is highlighted.
+S: Move backward to the previous node in your navigation history.
+A/D: Cycle the highlighted (yellow) future node among all nodes connected to the current (green) node.
+A: Cycle backward.
+D: Cycle forward.
+3. Camera Behavior
+The camera always keeps the current (green) node centered in the view.
+When you move to a new node (W/S):
+The camera transitions to a position above the new current node, looking at it from a fixed height.
+When you cycle future nodes (A/D):
+The camera orbits around the current node at a fixed radius and height.
+The camera should always look at the current node, but its position should be such that the highlighted (yellow) future node is in front of the camera (i.e., the camera is on the opposite side of the current node from the yellow node, looking toward the current node, with the yellow node in the background).
+4. Visual Feedback
+The edge between the current node and the highlighted future node is colored yellow.
+All other edges are white and semi-transparent.
+The camera transitions smoothly between positions and orientations.
