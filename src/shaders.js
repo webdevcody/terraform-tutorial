@@ -26,8 +26,8 @@ void main() {
     vec3 viewDir = normalize(vViewPosition);
     float fresnel = abs(dot(normal, viewDir));
     
-    // Create outline effect
-    float outlineStrength = 1.0 - smoothstep(0.6, 0.9, fresnel);
+    // Create stronger outline effect
+    float outlineStrength = 1.0 - smoothstep(0.3, 0.7, fresnel);
     
     vec3 baseColor = color;
     vec3 finalColor = baseColor;
@@ -37,12 +37,16 @@ void main() {
     
     // Add outline for highlighted nodes
     if (isHighlighted) {
-        finalColor = mix(outlineColor, finalColor, fresnel);
+        // Mix with a stronger bias towards the outline color at edges
+        finalColor = mix(outlineColor, finalColor, pow(fresnel, 1.5));
     }
     
     // Brighten selected nodes
     if (isSelected) {
-        finalColor *= 1.2;
+        finalColor *= 1.5;  // Increased brightness
+        // Add rim lighting effect for selected nodes
+        float rim = 1.0 - fresnel;
+        finalColor += outlineColor * pow(rim, 3.0) * 0.5;
     }
     
     gl_FragColor = vec4(finalColor, 1.0);
