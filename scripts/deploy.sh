@@ -9,6 +9,8 @@ pushd infra
   CLOUDFRONT_DISTRIBUTION_DOMAIN_NAME=$(terraform output -raw cloudfront_distribution_domain_name)
 popd
 
+npm run build
+
 # copy all the files in public to the s3 bucket
 aws s3 cp public/ "s3://${BUCKET_NAME}/" --recursive
 
