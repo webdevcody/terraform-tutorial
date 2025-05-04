@@ -9,6 +9,8 @@ export const CONNECTION_PROBABILITY = 0.3;
 export const COLOR_OTHER = 0xffffff; // White
 export const COLOR_UNCONNECTED = 0x666666; // Gray for unconnected nodes
 export const COLOR_FUTURE_OUTLINE = 0xff3300; // Bright orange-red for future node outline
+export const COLOR_CURRENT_LABEL = "#00ff00"; // Green for current node label
+export const COLOR_FUTURE_LABEL = "#ffff00"; // Yellow for future node labels
 
 // Node glow/emissive intensities
 export const INTENSITY_CURRENT = 1.8;

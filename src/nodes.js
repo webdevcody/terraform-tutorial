@@ -8,6 +8,8 @@ import {
   NODE_SPHERE_SEGMENTS,
   NODE_SPREAD_RADIUS,
   COLOR_FUTURE_OUTLINE,
+  COLOR_CURRENT_LABEL,
+  COLOR_FUTURE_LABEL,
 } from "./constants.js";
 
 // Physics constants for force-directed layout
@@ -20,8 +22,9 @@ const CENTER_GRAVITY = 0.05;
 // Define specific node structure
 const NODE_STRUCTURE = {
   nodes: [
+    // Main nodes
     "WDC",
-    "Begginer React Challenges",
+    "Beginner React Challenges",
     "Site Sherpa",
     "YouTube",
     "Project Planner AI",
@@ -31,9 +34,101 @@ const NODE_STRUCTURE = {
     "Icon Generator AI",
     "Github",
     "Deployment",
+
+    // Beginner React Challenges children
+    "Todo App",
+    "Weather App",
+    "Shopping Cart",
+    "User Authentication",
+    "API Integration",
+    "Form Validation",
+    "React Router Demo",
+    "State Management",
+
+    // Site Sherpa children
+    "SEO Optimization",
+    "Performance Metrics",
+    "Accessibility Audit",
+    "Security Scanning",
+    "Mobile Responsiveness",
+    "Load Time Analysis",
+    "Content Strategy",
+
+    // YouTube children
+    "Video SEO",
+    "Thumbnail Design",
+    "Content Calendar",
+    "Analytics Dashboard",
+    "Audience Growth",
+    "Monetization",
+    "Collaboration Tools",
+    "Live Streaming",
+
+    // Project Planner AI children
+    "Task Generation",
+    "Timeline Estimation",
+    "Resource Allocation",
+    "Risk Assessment",
+    "Budget Planning",
+    "Team Assignment",
+    "Progress Tracking",
+
+    // Video Crafter children
+    "Video Templates",
+    "Asset Library",
+    "Transition Effects",
+    "Audio Processing",
+    "Text Animation",
+    "Export Settings",
+    "Project Management",
+    "Collaboration Features",
+
+    // WDC Starter Kit children
+    "Component Library",
+    "Testing Suite",
+    "CI/CD Pipeline",
+    "Documentation",
+    "Style Guide",
+    "Best Practices",
+    "Project Structure",
+
+    // Booksmith children
+    "Chapter Organization",
+    "Writing Prompts",
+    "Character Profiles",
+    "Plot Timeline",
+    "World Building",
+    "Export Formats",
+    "Revision History",
+
+    // Icon Generator AI children
+    "Style Transfer",
+    "Color Schemes",
+    "Size Variants",
+    "Batch Processing",
+    "Custom Presets",
+    "Vector Export",
+    "Icon Collections",
+
+    // Github children
+    "Repository Setup",
+    "Branch Management",
+    "PR Templates",
+    "Action Workflows",
+    "Issue Labels",
+    "Team Permissions",
+
+    // Deployment children
+    "Environment Config",
+    "Docker Setup",
+    "SSL Certificates",
+    "Domain Management",
+    "Backup Strategy",
+    "Monitoring Tools",
   ],
   connections: [
-    ["WDC", "Begginer React Challenges"],
+    // WDC main connections
+    ["WDC", "Beginner React Challenges"],
     ["WDC", "Site Sherpa"],
     ["WDC", "YouTube"],
     ["WDC", "Project Planner AI"],
@@ -41,8 +136,101 @@ const NODE_STRUCTURE = {
     ["WDC", "WDC Starter Kit"],
     ["WDC", "Booksmith"],
     ["WDC", "Icon Generator AI"],
+
+    // Site Sherpa connections
     ["Site Sherpa", "Github"],
     ["Site Sherpa", "Deployment"],
+
+    // Beginner React Challenges children
+    ["Beginner React Challenges", "Todo App"],
+    ["Beginner React Challenges", "Weather App"],
+    ["Beginner React Challenges", "Shopping Cart"],
+    ["Beginner React Challenges", "User Authentication"],
+    ["Beginner React Challenges", "API Integration"],
+    ["Beginner React Challenges", "Form Validation"],
+    ["Beginner React Challenges", "React Router Demo"],
+    ["Beginner React Challenges", "State Management"],
+
+    // Site Sherpa children
+    ["Site Sherpa", "SEO Optimization"],
+    ["Site Sherpa", "Performance Metrics"],
+    ["Site Sherpa", "Accessibility Audit"],
+    ["Site Sherpa", "Security Scanning"],
+    ["Site Sherpa", "Mobile Responsiveness"],
+    ["Site Sherpa", "Load Time Analysis"],
+    ["Site Sherpa", "Content Strategy"],
+
+    // YouTube children
+    ["YouTube", "Video SEO"],
+    ["YouTube", "Thumbnail Design"],
+    ["YouTube", "Content Calendar"],
+    ["YouTube", "Analytics Dashboard"],
+    ["YouTube", "Audience Growth"],
+    ["YouTube", "Monetization"],
+    ["YouTube", "Collaboration Tools"],
+    ["YouTube", "Live Streaming"],
+
+    // Project Planner AI children
+    ["Project Planner AI", "Task Generation"],
+    ["Project Planner AI", "Timeline Estimation"],
+    ["Project Planner AI", "Resource Allocation"],
+    ["Project Planner AI", "Risk Assessment"],
+    ["Project Planner AI", "Budget Planning"],
+    ["Project Planner AI", "Team Assignment"],
+    ["Project Planner AI", "Progress Tracking"],
+
+    // Video Crafter children
+    ["The Video Crafter", "Video Templates"],
+    ["The Video Crafter", "Asset Library"],
+    ["The Video Crafter", "Transition Effects"],
+    ["The Video Crafter", "Audio Processing"],
+    ["The Video Crafter", "Text Animation"],
+    ["The Video Crafter", "Export Settings"],
+    ["The Video Crafter", "Project Management"],
+    ["The Video Crafter", "Collaboration Features"],
+
+    // WDC Starter Kit children
+    ["WDC Starter Kit", "Component Library"],
+    ["WDC Starter Kit", "Testing Suite"],
+    ["WDC Starter Kit", "CI/CD Pipeline"],
+    ["WDC Starter Kit", "Documentation"],
+    ["WDC Starter Kit", "Style Guide"],
+    ["WDC Starter Kit", "Best Practices"],
+    ["WDC Starter Kit", "Project Structure"],
+
+    // Booksmith children
+    ["Booksmith", "Chapter Organization"],
+    ["Booksmith", "Writing Prompts"],
+    ["Booksmith", "Character Profiles"],
+    ["Booksmith", "Plot Timeline"],
+    ["Booksmith", "World Building"],
+    ["Booksmith", "Export Formats"],
+    ["Booksmith", "Revision History"],
+
+    // Icon Generator AI children
+    ["Icon Generator AI", "Style Transfer"],
+    ["Icon Generator AI", "Color Schemes"],
+    ["Icon Generator AI", "Size Variants"],
+    ["Icon Generator AI", "Batch Processing"],
+    ["Icon Generator AI", "Custom Presets"],
+    ["Icon Generator AI", "Vector Export"],
+    ["Icon Generator AI", "Icon Collections"],
+
+    // Github children
+    ["Github", "Repository Setup"],
+    ["Github", "Branch Management"],
+    ["Github", "PR Templates"],
+    ["Github", "Action Workflows"],
+    ["Github", "Issue Labels"],
+    ["Github", "Team Permissions"],
+
+    // Deployment children
+    ["Deployment", "Environment Config"],
+    ["Deployment", "Docker Setup"],
+    ["Deployment", "SSL Certificates"],
+    ["Deployment", "Domain Management"],
+    ["Deployment", "Backup Strategy"],
+    ["Deployment", "Monitoring Tools"],
   ],
 };
 
@@ -232,6 +420,9 @@ export function createNodes(scene) {
       canvas.width = textWidth;
       canvas.height = textHeight;
 
+      // Clear the canvas with a transparent background
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
       // Style and draw the text
       context.font = `${fontSize}px Arial`;
       context.fillStyle = color;
@@ -242,26 +433,34 @@ export function createNodes(scene) {
     };
 
     // Create both small and large versions of the label
-    const smallCanvas = createLabelSprite(48, "white");
-    const largeCanvas = createLabelSprite(64, "#00ff00");
+    const smallCanvas = createLabelSprite(32, "rgba(255, 255, 255, 0.6)"); // Smaller size and more transparent for non-future nodes
+    const currentCanvas = createLabelSprite(48, COLOR_CURRENT_LABEL); // Green for current node
+    const futureCanvas = createLabelSprite(48, COLOR_FUTURE_LABEL); // Yellow for future nodes
 
     const smallTexture = new THREE.CanvasTexture(smallCanvas);
-    const largeTexture = new THREE.CanvasTexture(largeCanvas);
+    const currentTexture = new THREE.CanvasTexture(currentCanvas);
+    const futureTexture = new THREE.CanvasTexture(futureCanvas);
 
     const spriteMaterial = new THREE.SpriteMaterial({
       map: smallTexture,
+      transparent: true,
       sizeAttenuation: false,
     });
 
     const sprite = new THREE.Sprite(spriteMaterial);
-    sprite.scale.set((0.05 * smallCanvas.width) / smallCanvas.height, 0.05, 1);
+    sprite.scale.set(
+      (0.035 * smallCanvas.width) / smallCanvas.height,
+      0.035,
+      1
+    );
     sprite.position.copy(node.position);
     sprite.position.y += NODE_RADIUS + 0.5;
 
     sprite.userData.smallTexture = smallTexture;
-    sprite.userData.largeTexture = largeTexture;
+    sprite.userData.currentTexture = currentTexture;
+    sprite.userData.futureTexture = futureTexture;
     sprite.userData.smallScale = sprite.scale.clone();
-    sprite.userData.largeScale = sprite.scale.clone().multiplyScalar(1.3);
+    sprite.userData.largeScale = sprite.scale.clone().multiplyScalar(1.5);
 
     scene.add(sprite);
     nodeLabelMeshes.push(sprite);
@@ -283,13 +482,27 @@ export function createNodes(scene) {
   return { nodes, nodeConnections, nodeLabels, nodeLabelMeshes };
 }
 
+// Add these shader definitions at the top of the file
+const edgeVertexShader = `
+  uniform float linewidth;
+  void main() {
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const edgeFragmentShader = `
+  uniform vec3 color;
+  uniform float opacity;
+  void main() {
+    gl_FragColor = vec4(color, opacity);
+  }
+`;
+
 export function createEdges(scene, nodes, nodeConnections) {
   const edges = [];
 
-  // Create edges only for specified connections
   nodeConnections.forEach((connectedNodes, startNode) => {
     connectedNodes.forEach((endNode) => {
-      // Only create edge if we haven't created it yet (avoid duplicates)
       if (
         !edges.some(
           (edge) =>
@@ -297,71 +510,70 @@ export function createEdges(scene, nodes, nodeConnections) {
             (edge.startNode === endNode && edge.endNode === startNode)
         )
       ) {
-        // Create a curve for the edge
-        const points = [startNode.position, endNode.position];
-        const curve = new THREE.LineCurve3(
-          new THREE.Vector3(
-            startNode.position.x,
-            startNode.position.y,
-            startNode.position.z
-          ),
-          new THREE.Vector3(
-            endNode.position.x,
-            endNode.position.y,
-            endNode.position.z
-          )
+        // Create line geometry
+        const positions = new Float32Array([
+          startNode.position.x,
+          startNode.position.y,
+          startNode.position.z,
+          endNode.position.x,
+          endNode.position.y,
+          endNode.position.z,
+        ]);
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute(
+          "position",
+          new THREE.Float32BufferAttribute(positions, 3)
         );
 
-        // Create tube geometry for thick lines
-        const tubeGeometry = new THREE.TubeGeometry(curve, 1, 0.05, 8, false);
-        const material = new THREE.MeshBasicMaterial({
-          color: 0xffffff,
+        // Create shader material for the edge
+        const material = new THREE.ShaderMaterial({
+          vertexShader: edgeVertexShader,
+          fragmentShader: edgeFragmentShader,
+          uniforms: {
+            color: { value: new THREE.Color(0xffffff) },
+            opacity: { value: 0.8 },
+            linewidth: { value: 2.0 },
+          },
           transparent: true,
-          opacity: 0.3,
+          depthTest: false,
+          depthWrite: false,
+          side: THREE.DoubleSide,
         });
 
-        const tube = new THREE.Mesh(tubeGeometry, material);
-        scene.add(tube);
-
-        // Also keep a basic line for very thin edges
-        const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-        const lineMaterial = new THREE.LineBasicMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0.3,
-        });
-        const line = new THREE.Line(lineGeometry, lineMaterial);
+        // Create line segments for the edge
+        const line = new THREE.LineSegments(geometry, material);
+        line.renderOrder = 1;
+        line.frustumCulled = false;
         scene.add(line);
 
         edges.push({
           line,
-          tube,
           startNode,
           endNode,
           updatePosition: () => {
-            // Update tube geometry
-            const newCurve = new THREE.LineCurve3(
-              new THREE.Vector3(
-                startNode.position.x,
-                startNode.position.y,
-                startNode.position.z
-              ),
-              new THREE.Vector3(
-                endNode.position.x,
-                endNode.position.y,
-                endNode.position.z
-              )
-            );
-            tube.geometry = new THREE.TubeGeometry(newCurve, 1, 0.05, 8, false);
+            // Calculate direction for offset
+            const direction = new THREE.Vector3()
+              .subVectors(endNode.position, startNode.position)
+              .normalize();
 
-            // Update line geometry
+            // Apply small offset to prevent z-fighting
+            const offsetStart = direction
+              .clone()
+              .multiplyScalar(NODE_RADIUS * 0.1);
+            const offsetEnd = direction
+              .clone()
+              .multiplyScalar(-NODE_RADIUS * 0.1);
+
+            // Update positions with offset
             const positions = line.geometry.attributes.position.array;
-            positions[0] = startNode.position.x;
-            positions[1] = startNode.position.y;
-            positions[2] = startNode.position.z;
-            positions[3] = endNode.position.x;
-            positions[4] = endNode.position.y;
-            positions[5] = endNode.position.z;
+            positions[0] = startNode.position.x + offsetStart.x;
+            positions[1] = startNode.position.y + offsetStart.y;
+            positions[2] = startNode.position.z + offsetStart.z;
+            positions[3] = endNode.position.x + offsetEnd.x;
+            positions[4] = endNode.position.y + offsetEnd.y;
+            positions[5] = endNode.position.z + offsetEnd.z;
+
             line.geometry.attributes.position.needsUpdate = true;
           },
         });

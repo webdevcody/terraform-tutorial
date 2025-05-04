@@ -199,6 +199,17 @@ function updateColors() {
       node.userData.originalColor = node.material.uniforms.color.value.clone();
     }
 
+    // Set label opacity based on connection status
+    if (node === currentNode) {
+      labelSprite.material.opacity = 1.0; // Current node fully visible
+    } else if (targetNode && node === targetNode) {
+      labelSprite.material.opacity = 0.9; // Target node highly visible
+    } else if (isConnected) {
+      labelSprite.material.opacity = 0.7; // Connected nodes moderately visible
+    } else {
+      labelSprite.material.opacity = 0.2; // Unconnected nodes very transparent
+    }
+
     if (node === currentNode) {
       // Current node appearance
       material.uniforms.isSelected.value = true;
@@ -210,8 +221,8 @@ function updateColors() {
       };
       // Scale up current node
       node.scale.copy(node.userData.largeScale);
-      // Update label to large version
-      labelSprite.material.map = labelSprite.userData.largeTexture;
+      // Update label to current version with green color
+      labelSprite.material.map = labelSprite.userData.currentTexture;
       labelSprite.scale.copy(labelSprite.userData.largeScale);
     } else if (targetNode && node === targetNode) {
       material.uniforms.isSelected.value = false;
@@ -223,8 +234,8 @@ function updateColors() {
       };
       // Reset scale
       node.scale.copy(node.userData.originalScale);
-      // Update label to small version
-      labelSprite.material.map = labelSprite.userData.smallTexture;
+      // Update label to future version with yellow color
+      labelSprite.material.map = labelSprite.userData.futureTexture;
       labelSprite.scale.copy(labelSprite.userData.smallScale);
     } else if (isConnected) {
       material.uniforms.isSelected.value = false;
@@ -262,19 +273,14 @@ function updateColors() {
         (edge.startNode === targetNode && edge.endNode === currentNode))
     ) {
       // Highlight the future edge
-      edge.line.material.color.set(COLOR_EDGE_HIGHLIGHT);
-      edge.line.material.opacity = 0; // Hide the thin line
-      edge.tube.material.color.set(COLOR_EDGE_HIGHLIGHT);
-      edge.tube.material.opacity = EDGE_OPACITY_HIGHLIGHT;
-      edge.tube.visible = true; // Show the tube for thick edge
+      edge.line.material.uniforms.color.value.set(COLOR_EDGE_HIGHLIGHT);
+      edge.line.material.uniforms.opacity.value = 0.8;
     } else if (isConnectedEdge) {
-      edge.line.material.color.set(COLOR_EDGE_DEFAULT);
-      edge.line.material.opacity = EDGE_OPACITY_DEFAULT;
-      edge.tube.visible = false; // Hide the tube for regular edges
+      edge.line.material.uniforms.color.value.set(COLOR_EDGE_DEFAULT);
+      edge.line.material.uniforms.opacity.value = 0.6;
     } else {
-      edge.line.material.color.set(COLOR_EDGE_UNCONNECTED);
-      edge.line.material.opacity = EDGE_OPACITY_UNCONNECTED;
-      edge.tube.visible = false; // Hide the tube for unconnected edges
+      edge.line.material.uniforms.color.value.set(COLOR_EDGE_UNCONNECTED);
+      edge.line.material.uniforms.opacity.value = 0.2;
     }
     // Update edge positions
     edge.updatePosition();
@@ -362,6 +368,34 @@ function animate() {
   // Only update force-directed layout when textarea is not focused
   if (!isTextareaFocused) {
     updateNodePositions(nodes, nodeConnections, 0.016);
+
+    // Update edge positions after nodes have moved
+    edges.forEach((edge) => {
+      edge.updatePosition();
+
+      // Ensure edge colors and opacity are maintained
+      const isConnectedEdge =
+        edge.startNode === currentNode || edge.endNode === currentNode;
+      const targetNode =
+        currentConnectionIndex >= 0
+          ? nodeConnections.get(currentNode)[currentConnectionIndex]
+          : null;
+
+      if (
+        targetNode &&
+        ((edge.startNode === currentNode && edge.endNode === targetNode) ||
+          (edge.startNode === targetNode && edge.endNode === currentNode))
+      ) {
+        edge.line.material.uniforms.color.value.set(COLOR_EDGE_HIGHLIGHT);
+        edge.line.material.uniforms.opacity.value = 0.8;
+      } else if (isConnectedEdge) {
+        edge.line.material.uniforms.color.value.set(COLOR_EDGE_DEFAULT);
+        edge.line.material.uniforms.opacity.value = 0.6;
+      } else {
+        edge.line.material.uniforms.color.value.set(COLOR_EDGE_UNCONNECTED);
+        edge.line.material.uniforms.opacity.value = 0.2;
+      }
+    });
   }
 
   if (isTransitioning) {
@@ -412,13 +446,10 @@ function animate() {
     }
   }
 
-  // Update node rotations and edge positions
+  // Update node rotations
   nodes.forEach((node) => {
     node.rotation.x += 0.01;
     node.rotation.y += 0.01;
-  });
-  edges.forEach((edge) => {
-    edge.updatePosition();
   });
 
   // Update label positions to follow nodes
