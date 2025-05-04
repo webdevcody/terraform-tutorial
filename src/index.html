@@ -8,13 +8,76 @@
     body {
       margin: 0;
       overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: #000;
     }
     canvas {
       display: block;
     }
+    /* Hide any default panels */
+    .panel-container {
+      display: none !important;
+    }
+    #notePanel {
+      position: fixed;
+      right: -400px; /* Start hidden */
+      top: 50%;
+      transform: translateY(-50%);
+      width: 400px;
+      height: 80vh;
+      background: rgba(30, 30, 30, 0.95);
+      color: white;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: right 0.3s ease;
+      border-radius: 10px 0 0 10px;
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+      z-index: 2;
+    }
+    #notePanel.open {
+      right: 0;
+    }
+    #notePanel h2 {
+      margin: 0 0 20px 0;
+      color: #00ff00;
+    }
+    #notePanel textarea {
+      width: 100%;
+      height: calc(100% - 100px);
+      background: rgba(50, 50, 50, 0.8);
+      border: 1px solid #444;
+      border-radius: 5px;
+      color: white;
+      padding: 10px;
+      box-sizing: border-box;
+      resize: none;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    #notePanel textarea:focus {
+      outline: none;
+      border-color: #00ff00;
+    }
+    .no-node-selected {
+      display: flex;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
+  <div id="notePanel">
+    <div class="no-node-selected">
+      Select a node to add notes
+    </div>
+    <div class="note-content" style="display: none;">
+      <h2>Notes for <span class="node-name"></span></h2>
+      <textarea placeholder="Add your notes here..."></textarea>
+    </div>
+  </div>
   <script type="module" src="index.js"></script>
 </body>
 </html>

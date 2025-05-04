@@ -25,6 +25,10 @@ export function getOrbitCameraPosition(
   height,
   radius
 ) {
+  if (!currentNode || !targetNode) {
+    return new THREE.Vector3(0, height, -height);
+  }
+
   // Calculate vector from current to target node
   const direction = new THREE.Vector3().subVectors(
     targetNode.position,
@@ -48,6 +52,10 @@ export function getOrbitCameraPosition(
 }
 
 export function getLookAtPoint(currentNode, targetNode, offset = 1.0) {
+  if (!currentNode || !targetNode) {
+    return new THREE.Vector3(0, 0, 0);
+  }
+
   // Calculate midpoint between current and target nodes
   const midpoint = new THREE.Vector3()
     .addVectors(currentNode.position, targetNode.position)

@@ -19,10 +19,10 @@ export const INTENSITY_UNCONNECTED = 0.1;
 // Edge colors and opacities
 export const COLOR_EDGE_DEFAULT = 0xffffff;
 export const COLOR_EDGE_HIGHLIGHT = 0xffff00;
-export const COLOR_EDGE_UNCONNECTED = 0x666666;
+export const COLOR_EDGE_UNCONNECTED = 0xaaaaaa;
 export const EDGE_OPACITY_DEFAULT = 0.5;
 export const EDGE_OPACITY_HIGHLIGHT = 2.8;
-export const EDGE_OPACITY_UNCONNECTED = 0.15;
+export const EDGE_OPACITY_UNCONNECTED = 0.35;
 
 // Camera and animation
 export const CAMERA_HEIGHT = 10;

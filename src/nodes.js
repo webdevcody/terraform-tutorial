@@ -4,43 +4,46 @@ import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { nodeVertexShader, nodeFragmentShader } from "./shaders.js";
 import {
-  NODE_COUNT,
   NODE_RADIUS,
   NODE_SPHERE_SEGMENTS,
   NODE_SPREAD_RADIUS,
-  CONNECTION_PROBABILITY,
   COLOR_FUTURE_OUTLINE,
 } from "./constants.js";
 
-// Generate random labels
-const generateRandomLabel = () => {
-  const labels = [
-    "Alpha",
-    "Beta",
-    "Gamma",
-    "Delta",
-    "Epsilon",
-    "Zeta",
-    "Eta",
-    "Theta",
-    "Iota",
-    "Kappa",
-    "Lambda",
-    "Mu",
-    "Nu",
-    "Xi",
-    "Omicron",
-    "Pi",
-    "Rho",
-    "Sigma",
-    "Tau",
-    "Upsilon",
-    "Phi",
-    "Chi",
-    "Psi",
-    "Omega",
-  ];
-  return labels[Math.floor(Math.random() * labels.length)];
+// Physics constants for force-directed layout
+const REPULSION_STRENGTH = 100;
+const SPRING_STRENGTH = 0.03;
+const DAMPING = 0.95;
+const MIN_DISTANCE = 3;
+const CENTER_GRAVITY = 0.05;
+
+// Define specific node structure
+const NODE_STRUCTURE = {
+  nodes: [
+    "WDC",
+    "Begginer React Challenges",
+    "Site Sherpa",
+    "YouTube",
+    "Project Planner AI",
+    "The Video Crafter",
+    "WDC Starter Kit",
+    "Booksmith",
+    "Icon Generator AI",
+    "Github",
+    "Deployment",
+  ],
+  connections: [
+    ["WDC", "Begginer React Challenges"],
+    ["WDC", "Site Sherpa"],
+    ["WDC", "YouTube"],
+    ["WDC", "Project Planner AI"],
+    ["WDC", "The Video Crafter"],
+    ["WDC", "WDC Starter Kit"],
+    ["WDC", "Booksmith"],
+    ["WDC", "Icon Generator AI"],
+    ["Site Sherpa", "Github"],
+    ["Site Sherpa", "Deployment"],
+  ],
 };
 
 // Generate random color
@@ -48,11 +51,115 @@ const generateRandomColor = () => {
   return new THREE.Color().setHSL(Math.random(), 0.7, 0.5);
 };
 
+// Helper function to calculate forces
+function calculateForces(nodes, nodeConnections) {
+  // Initialize forces
+  const forces = new Map(nodes.map((node) => [node, new THREE.Vector3()]));
+
+  // Calculate repulsion forces between all nodes
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const nodeA = nodes[i];
+      const nodeB = nodes[j];
+
+      const diff = new THREE.Vector3().subVectors(
+        nodeA.position,
+        nodeB.position
+      );
+      const distance = diff.length();
+
+      if (distance < MIN_DISTANCE) {
+        // Add small random offset to prevent nodes from stacking exactly
+        diff.add(
+          new THREE.Vector3(
+            (Math.random() - 0.5) * 0.1,
+            (Math.random() - 0.5) * 0.1,
+            (Math.random() - 0.5) * 0.1
+          )
+        );
+      }
+
+      // Calculate repulsion force (inverse square law)
+      const repulsionForce = diff
+        .normalize()
+        .multiplyScalar(REPULSION_STRENGTH / (distance * distance + 1));
+
+      forces.get(nodeA).add(repulsionForce);
+      forces.get(nodeB).sub(repulsionForce);
+    }
+  }
+
+  // Calculate spring forces for connected nodes
+  nodeConnections.forEach((connectedNodes, node) => {
+    connectedNodes.forEach((connectedNode) => {
+      const diff = new THREE.Vector3().subVectors(
+        connectedNode.position,
+        node.position
+      );
+      const distance = diff.length();
+
+      // Spring force (Hooke's law)
+      const springForce = diff
+        .normalize()
+        .multiplyScalar(distance * SPRING_STRENGTH);
+
+      forces.get(node).add(springForce);
+      forces.get(connectedNode).sub(springForce);
+    });
+  });
+
+  // Add center gravity force
+  nodes.forEach((node) => {
+    const toCenter = new THREE.Vector3().subVectors(
+      new THREE.Vector3(0, node.position.y, 0),
+      node.position
+    );
+    const centerForce = toCenter.multiplyScalar(CENTER_GRAVITY);
+    forces.get(node).add(centerForce);
+  });
+
+  return forces;
+}
+
+// Add velocity property to nodes
+function initializeNodePhysics(nodes) {
+  nodes.forEach((node) => {
+    node.userData.velocity = new THREE.Vector3();
+  });
+}
+
+// Update node positions based on forces
+export function updateNodePositions(nodes, nodeConnections, deltaTime) {
+  const forces = calculateForces(nodes, nodeConnections);
+
+  nodes.forEach((node) => {
+    if (!node.userData.velocity) {
+      node.userData.velocity = new THREE.Vector3();
+    }
+
+    // Apply force to velocity
+    const force = forces.get(node);
+    node.userData.velocity.add(force.multiplyScalar(deltaTime));
+
+    // Apply damping
+    node.userData.velocity.multiplyScalar(DAMPING);
+
+    // Update position
+    node.position.add(node.userData.velocity.clone().multiplyScalar(deltaTime));
+
+    // Keep WDC node elevated
+    if (node.userData.label === "WDC") {
+      node.position.y = NODE_SPREAD_RADIUS * 0.5;
+    }
+  });
+}
+
 export function createNodes(scene) {
   const nodes = [];
   const nodeConnections = new Map();
   const nodeLabels = new Map();
   const nodeLabelMeshes = []; // Store label meshes for billboarding
+  const nodeMap = new Map(); // Map to store node references by label
 
   // Create font loader for labels
   const loader = new FontLoader();
@@ -63,7 +170,10 @@ export function createNodes(scene) {
     );
   });
 
-  for (let i = 0; i < NODE_COUNT; i++) {
+  // Create nodes with specific labels
+  for (let i = 0; i < NODE_STRUCTURE.nodes.length; i++) {
+    const label = NODE_STRUCTURE.nodes[i];
+
     // Store original scale for size transitions
     const originalScale = new THREE.Vector3(1, 1, 1);
     const largeScale = new THREE.Vector3(1.5, 1.5, 1.5);
@@ -94,19 +204,18 @@ export function createNodes(scene) {
     node.userData.originalScale = originalScale.clone();
     node.userData.largeScale = largeScale.clone();
 
-    const radius = NODE_SPREAD_RADIUS;
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(2 * Math.random() - 1);
-    node.position.x = radius * Math.sin(phi) * Math.cos(theta);
-    node.position.y = radius * Math.sin(phi) * Math.sin(theta);
-    node.position.z = radius * Math.cos(phi);
+    // Position nodes in a circle for better visibility
+    const angle = (i / NODE_STRUCTURE.nodes.length) * Math.PI * 2;
+    const radius = NODE_SPREAD_RADIUS * 0.7; // Slightly smaller radius for better visibility
+    node.position.x = radius * Math.cos(angle);
+    node.position.y = label === "WDC" ? radius * 0.5 : 0; // Place WDC node higher
+    node.position.z = radius * Math.sin(angle);
+
     scene.add(node);
     nodes.push(node);
     nodeConnections.set(node, []);
-
-    // Create label
-    const label = generateRandomLabel();
     nodeLabels.set(node, label);
+    nodeMap.set(label, node);
 
     // Create sprite label with different sizes for current/non-current
     const createLabelSprite = (fontSize, color) => {
@@ -134,13 +243,11 @@ export function createNodes(scene) {
 
     // Create both small and large versions of the label
     const smallCanvas = createLabelSprite(48, "white");
-    const largeCanvas = createLabelSprite(64, "#00ff00"); // Bright green for current node
+    const largeCanvas = createLabelSprite(64, "#00ff00");
 
-    // Create textures for both sizes
     const smallTexture = new THREE.CanvasTexture(smallCanvas);
     const largeTexture = new THREE.CanvasTexture(largeCanvas);
 
-    // Create sprite material with small texture initially
     const spriteMaterial = new THREE.SpriteMaterial({
       map: smallTexture,
       sizeAttenuation: false,
@@ -151,7 +258,6 @@ export function createNodes(scene) {
     sprite.position.copy(node.position);
     sprite.position.y += NODE_RADIUS + 0.5;
 
-    // Store textures and scale info for later updates
     sprite.userData.smallTexture = smallTexture;
     sprite.userData.largeTexture = largeTexture;
     sprite.userData.smallScale = sprite.scale.clone();
@@ -160,26 +266,49 @@ export function createNodes(scene) {
     scene.add(sprite);
     nodeLabelMeshes.push(sprite);
   }
+
+  // Create specific connections based on NODE_STRUCTURE
+  NODE_STRUCTURE.connections.forEach(([fromLabel, toLabel]) => {
+    const fromNode = nodeMap.get(fromLabel);
+    const toNode = nodeMap.get(toLabel);
+    if (fromNode && toNode) {
+      nodeConnections.get(fromNode).push(toNode);
+      nodeConnections.get(toNode).push(fromNode);
+    }
+  });
+
+  // Initialize physics properties for nodes
+  initializeNodePhysics(nodes);
+
   return { nodes, nodeConnections, nodeLabels, nodeLabelMeshes };
 }
 
 export function createEdges(scene, nodes, nodeConnections) {
   const edges = [];
-  for (let i = 0; i < nodes.length; i++) {
-    for (let j = i + 1; j < nodes.length; j++) {
-      if (Math.random() < CONNECTION_PROBABILITY) {
+
+  // Create edges only for specified connections
+  nodeConnections.forEach((connectedNodes, startNode) => {
+    connectedNodes.forEach((endNode) => {
+      // Only create edge if we haven't created it yet (avoid duplicates)
+      if (
+        !edges.some(
+          (edge) =>
+            (edge.startNode === startNode && edge.endNode === endNode) ||
+            (edge.startNode === endNode && edge.endNode === startNode)
+        )
+      ) {
         // Create a curve for the edge
-        const points = [nodes[i].position, nodes[j].position];
+        const points = [startNode.position, endNode.position];
         const curve = new THREE.LineCurve3(
           new THREE.Vector3(
-            nodes[i].position.x,
-            nodes[i].position.y,
-            nodes[i].position.z
+            startNode.position.x,
+            startNode.position.y,
+            startNode.position.z
           ),
           new THREE.Vector3(
-            nodes[j].position.x,
-            nodes[j].position.y,
-            nodes[j].position.z
+            endNode.position.x,
+            endNode.position.y,
+            endNode.position.z
           )
         );
 
@@ -207,40 +336,38 @@ export function createEdges(scene, nodes, nodeConnections) {
         edges.push({
           line,
           tube,
-          startNode: nodes[i],
-          endNode: nodes[j],
+          startNode,
+          endNode,
           updatePosition: () => {
             // Update tube geometry
             const newCurve = new THREE.LineCurve3(
               new THREE.Vector3(
-                nodes[i].position.x,
-                nodes[i].position.y,
-                nodes[i].position.z
+                startNode.position.x,
+                startNode.position.y,
+                startNode.position.z
               ),
               new THREE.Vector3(
-                nodes[j].position.x,
-                nodes[j].position.y,
-                nodes[j].position.z
+                endNode.position.x,
+                endNode.position.y,
+                endNode.position.z
               )
             );
             tube.geometry = new THREE.TubeGeometry(newCurve, 1, 0.05, 8, false);
 
             // Update line geometry
             const positions = line.geometry.attributes.position.array;
-            positions[0] = nodes[i].position.x;
-            positions[1] = nodes[i].position.y;
-            positions[2] = nodes[i].position.z;
-            positions[3] = nodes[j].position.x;
-            positions[4] = nodes[j].position.y;
-            positions[5] = nodes[j].position.z;
+            positions[0] = startNode.position.x;
+            positions[1] = startNode.position.y;
+            positions[2] = startNode.position.z;
+            positions[3] = endNode.position.x;
+            positions[4] = endNode.position.y;
+            positions[5] = endNode.position.z;
             line.geometry.attributes.position.needsUpdate = true;
           },
         });
-
-        nodeConnections.get(nodes[i]).push(nodes[j]);
-        nodeConnections.get(nodes[j]).push(nodes[i]);
       }
-    }
-  }
+    });
+  });
+
   return edges;
 }
