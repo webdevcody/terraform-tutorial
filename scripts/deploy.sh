@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Disable terraform pager output
+export PAGER=''
+
 pushd infra
   terraform init
   terraform apply --auto-approve
@@ -12,7 +15,7 @@ popd
 npm run build
 
 # copy all the files in public to the s3 bucket
-aws s3 cp public/ "s3://${BUCKET_NAME}/" --recursive
+aws s3 cp dist/ "s3://${BUCKET_NAME}/" --recursive
 
 # invalidate the cloudfront distribution
 aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIBUTION_ID} --paths "/*"

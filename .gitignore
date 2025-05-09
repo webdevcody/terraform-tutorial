@@ -2,3 +2,4 @@ infra/.terraform*
 infra/terraform.tfstate
 infra/terraform.tfstate.backup
 node_modules/
+dist/

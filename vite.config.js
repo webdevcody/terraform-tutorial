@@ -7,10 +7,11 @@ export default defineConfig({
     open: true,
   },
   build: {
-    outDir: "../public",
+    outDir: "../dist",
     emptyOutDir: true,
+    copyPublicDir: true,
     rollupOptions: {
-      input: "src/index.js",
+      input: "src/index.html",
       output: {
         entryFileNames: "index.js",
         format: "iife", // IIFE for <script> tag usage
