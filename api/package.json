@@ -10,7 +10,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.806.0",
+    "@aws-sdk/lib-dynamodb": "^3.806.0",
     "@codegenie/serverless-express": "^4.16.0",
+    "cors": "^2.8.5",
     "express": "^5.1.0"
   }
 }

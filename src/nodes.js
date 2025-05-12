@@ -20,219 +20,24 @@ const MIN_DISTANCE = 3;
 const CENTER_GRAVITY = 0.05;
 
 // Define specific node structure
-const NODE_STRUCTURE = {
-  nodes: [
-    // Main nodes
-    "WDC",
-    "Beginner React Challenges",
-    "Site Sherpa",
-    "YouTube",
-    "Project Planner AI",
-    "The Video Crafter",
-    "WDC Starter Kit",
-    "Booksmith",
-    "Icon Generator AI",
-    "Github",
-    "Deployment",
-
-    // Beginner React Challenges children
-    "Todo App",
-    "Weather App",
-    "Shopping Cart",
-    "User Authentication",
-    "API Integration",
-    "Form Validation",
-    "React Router Demo",
-    "State Management",
-
-    // Site Sherpa children
-    "SEO Optimization",
-    "Performance Metrics",
-    "Accessibility Audit",
-    "Security Scanning",
-    "Mobile Responsiveness",
-    "Load Time Analysis",
-    "Content Strategy",
-
-    // YouTube children
-    "Video SEO",
-    "Thumbnail Design",
-    "Content Calendar",
-    "Analytics Dashboard",
-    "Audience Growth",
-    "Monetization",
-    "Collaboration Tools",
-    "Live Streaming",
-
-    // Project Planner AI children
-    "Task Generation",
-    "Timeline Estimation",
-    "Resource Allocation",
-    "Risk Assessment",
-    "Budget Planning",
-    "Team Assignment",
-    "Progress Tracking",
-
-    // Video Crafter children
-    "Video Templates",
-    "Asset Library",
-    "Transition Effects",
-    "Audio Processing",
-    "Text Animation",
-    "Export Settings",
-    "Project Management",
-    "Collaboration Features",
-
-    // WDC Starter Kit children
-    "Component Library",
-    "Testing Suite",
-    "CI/CD Pipeline",
-    "Documentation",
-    "Style Guide",
-    "Best Practices",
-    "Project Structure",
-
-    // Booksmith children
-    "Chapter Organization",
-    "Writing Prompts",
-    "Character Profiles",
-    "Plot Timeline",
-    "World Building",
-    "Export Formats",
-    "Revision History",
-
-    // Icon Generator AI children
-    "Style Transfer",
-    "Color Schemes",
-    "Size Variants",
-    "Batch Processing",
-    "Custom Presets",
-    "Vector Export",
-    "Icon Collections",
-
-    // Github children
-    "Repository Setup",
-    "Branch Management",
-    "PR Templates",
-    "Action Workflows",
-    "Issue Labels",
-    "Team Permissions",
-
-    // Deployment children
-    "Environment Config",
-    "Docker Setup",
-    "SSL Certificates",
-    "Domain Management",
-    "Backup Strategy",
-    "Monitoring Tools",
-  ],
-  connections: [
-    // WDC main connections
-    ["WDC", "Beginner React Challenges"],
-    ["WDC", "Site Sherpa"],
-    ["WDC", "YouTube"],
-    ["WDC", "Project Planner AI"],
-    ["WDC", "The Video Crafter"],
-    ["WDC", "WDC Starter Kit"],
-    ["WDC", "Booksmith"],
-    ["WDC", "Icon Generator AI"],
-
-    // Site Sherpa connections
-    ["Site Sherpa", "Github"],
-    ["Site Sherpa", "Deployment"],
-
-    // Beginner React Challenges children
-    ["Beginner React Challenges", "Todo App"],
-    ["Beginner React Challenges", "Weather App"],
-    ["Beginner React Challenges", "Shopping Cart"],
-    ["Beginner React Challenges", "User Authentication"],
-    ["Beginner React Challenges", "API Integration"],
-    ["Beginner React Challenges", "Form Validation"],
-    ["Beginner React Challenges", "React Router Demo"],
-    ["Beginner React Challenges", "State Management"],
-
-    // Site Sherpa children
-    ["Site Sherpa", "SEO Optimization"],
-    ["Site Sherpa", "Performance Metrics"],
-    ["Site Sherpa", "Accessibility Audit"],
-    ["Site Sherpa", "Security Scanning"],
-    ["Site Sherpa", "Mobile Responsiveness"],
-    ["Site Sherpa", "Load Time Analysis"],
-    ["Site Sherpa", "Content Strategy"],
-
-    // YouTube children
-    ["YouTube", "Video SEO"],
-    ["YouTube", "Thumbnail Design"],
-    ["YouTube", "Content Calendar"],
-    ["YouTube", "Analytics Dashboard"],
-    ["YouTube", "Audience Growth"],
-    ["YouTube", "Monetization"],
-    ["YouTube", "Collaboration Tools"],
-    ["YouTube", "Live Streaming"],
-
-    // Project Planner AI children
-    ["Project Planner AI", "Task Generation"],
-    ["Project Planner AI", "Timeline Estimation"],
-    ["Project Planner AI", "Resource Allocation"],
-    ["Project Planner AI", "Risk Assessment"],
-    ["Project Planner AI", "Budget Planning"],
-    ["Project Planner AI", "Team Assignment"],
-    ["Project Planner AI", "Progress Tracking"],
-
-    // Video Crafter children
-    ["The Video Crafter", "Video Templates"],
-    ["The Video Crafter", "Asset Library"],
-    ["The Video Crafter", "Transition Effects"],
-    ["The Video Crafter", "Audio Processing"],
-    ["The Video Crafter", "Text Animation"],
-    ["The Video Crafter", "Export Settings"],
-    ["The Video Crafter", "Project Management"],
-    ["The Video Crafter", "Collaboration Features"],
-
-    // WDC Starter Kit children
-    ["WDC Starter Kit", "Component Library"],
-    ["WDC Starter Kit", "Testing Suite"],
-    ["WDC Starter Kit", "CI/CD Pipeline"],
-    ["WDC Starter Kit", "Documentation"],
-    ["WDC Starter Kit", "Style Guide"],
-    ["WDC Starter Kit", "Best Practices"],
-    ["WDC Starter Kit", "Project Structure"],
-
-    // Booksmith children
-    ["Booksmith", "Chapter Organization"],
-    ["Booksmith", "Writing Prompts"],
-    ["Booksmith", "Character Profiles"],
-    ["Booksmith", "Plot Timeline"],
-    ["Booksmith", "World Building"],
-    ["Booksmith", "Export Formats"],
-    ["Booksmith", "Revision History"],
-
-    // Icon Generator AI children
-    ["Icon Generator AI", "Style Transfer"],
-    ["Icon Generator AI", "Color Schemes"],
-    ["Icon Generator AI", "Size Variants"],
-    ["Icon Generator AI", "Batch Processing"],
-    ["Icon Generator AI", "Custom Presets"],
-    ["Icon Generator AI", "Vector Export"],
-    ["Icon Generator AI", "Icon Collections"],
-
-    // Github children
-    ["Github", "Repository Setup"],
-    ["Github", "Branch Management"],
-    ["Github", "PR Templates"],
-    ["Github", "Action Workflows"],
-    ["Github", "Issue Labels"],
-    ["Github", "Team Permissions"],
-
-    // Deployment children
-    ["Deployment", "Environment Config"],
-    ["Deployment", "Docker Setup"],
-    ["Deployment", "SSL Certificates"],
-    ["Deployment", "Domain Management"],
-    ["Deployment", "Backup Strategy"],
-    ["Deployment", "Monitoring Tools"],
-  ],
-};
+async function fetchNodeStructure() {
+  try {
+    const hostname = window.location.hostname;
+    const response = await fetch(`https://api.${hostname}/api/nodes`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching node structure:", error);
+    // Return a minimal structure as fallback
+    return {
+      nodes: ["WDC"],
+      connections: [],
+    };
+  }
+}
 
 // Generate random color
 const generateRandomColor = () => {
@@ -342,12 +147,15 @@ export function updateNodePositions(nodes, nodeConnections, deltaTime) {
   });
 }
 
-export function createNodes(scene) {
+export async function createNodes(scene) {
   const nodes = [];
   const nodeConnections = new Map();
   const nodeLabels = new Map();
   const nodeLabelMeshes = []; // Store label meshes for billboarding
   const nodeMap = new Map(); // Map to store node references by label
+
+  // Fetch node structure from API
+  const NODE_STRUCTURE = await fetchNodeStructure();
 
   // Create font loader for labels
   const loader = new FontLoader();

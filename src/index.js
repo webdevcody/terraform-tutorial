@@ -42,9 +42,31 @@ renderer.domElement.style.zIndex = "1"; // Lower than the note panel
 document.body.appendChild(renderer.domElement);
 
 // Create nodes and edges
-const { nodes, nodeConnections, nodeLabels, nodeLabelMeshes } =
-  createNodes(scene);
-const edges = createEdges(scene, nodes, nodeConnections);
+let nodes,
+  nodeConnections,
+  nodeLabels,
+  nodeLabelMeshes,
+  edges,
+  currentNode,
+  nodeHistory;
+
+// Initialize the scene asynchronously
+(async function initScene() {
+  const nodeData = await createNodes(scene);
+  nodes = nodeData.nodes;
+  nodeConnections = nodeData.nodeConnections;
+  nodeLabels = nodeData.nodeLabels;
+  nodeLabelMeshes = nodeData.nodeLabelMeshes;
+  edges = createEdges(scene, nodes, nodeConnections);
+
+  currentNode = nodes[0];
+  nodeHistory = [currentNode];
+
+  // Initialize with first node selected
+  updateColors();
+  updateNotePanel();
+  updateCamera();
+})();
 
 // Note management system initialization
 const nodeNotes = new Map();
@@ -57,7 +79,6 @@ const nodeNameSpan = notePanel.querySelector(".node-name");
 const noteTextarea = notePanel.querySelector("textarea");
 
 // Initialize state variables
-let currentNode = nodes[0];
 let currentConnectionIndex = -1;
 let isTransitioning = false;
 let transitionStartTime = 0;
@@ -65,7 +86,6 @@ let startPosition = new THREE.Vector3();
 let targetPosition = new THREE.Vector3();
 let startLookAt = new THREE.Vector3();
 let targetLookAt = new THREE.Vector3();
-const nodeHistory = [currentNode];
 let historyIndex = 0;
 
 // Update panel content when node changes
@@ -116,10 +136,6 @@ noteTextarea.addEventListener("blur", () => {
   window.addEventListener("keydown", handleKeyDown);
   window.toggleWASDControls(true);
 });
-
-// Initialize with first node selected
-updateColors();
-updateNotePanel();
 
 // Add lights
 const ambientLight = new THREE.AmbientLight(COLOR_OTHER, 0.5);
@@ -358,9 +374,6 @@ setupControls({
   startCameraTransition,
   updateColors,
 });
-
-updateCamera();
-updateColors();
 
 function animate() {
   requestAnimationFrame(animate);

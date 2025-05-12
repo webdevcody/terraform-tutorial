@@ -18,6 +18,10 @@ module "lambda_function" {
 
   image_uri    = module.docker_image.image_uri
   package_type = "Image"
+
+  environment_variables = {
+    DYNAMODB_TABLE_NAME = aws_dynamodb_table.main_table.name
+  }
 }
 
 module "docker_image" {
